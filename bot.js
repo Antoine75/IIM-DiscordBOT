@@ -2,6 +2,8 @@ const clientLoader = require('./src/clientLoader');
 const commandLoader = require('./src/commandLoader');
 require('colors');
 
+const database = require('./src/databaseConnector');
+
 const COMMAND_PREFIX = '!';
 
 clientLoader.createClient(["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS"])
@@ -23,6 +25,9 @@ clientLoader.createClient(["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS"])
   
   
     client.on('messageCreate', async (message) => {
+
+      const db = database.getDatabase();
+
       // Ne pas tenir compte des messages envoyés par les bots, ou qui ne commencent pas par le préfix
       if (message.author.bot || !message.content.startsWith(COMMAND_PREFIX)) return;
 
