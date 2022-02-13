@@ -1,14 +1,17 @@
 const clientLoader = require('./src/clientLoader');
 const commandLoader = require('./src/commandLoader');
+const db = require('./src/databaseConnector');
+const Discord = require('discord.js');
+const level = require('./level')
 require('colors');
 
-const database = require('./src/databaseConnector');
+
 
 const COMMAND_PREFIX = '!';
 
 clientLoader.createClient(["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS"])
 
-  .then(async (client) => {
+  .then(async (client, bot) => {
     await commandLoader.load(client);
 
     client.on ("guildMemberAdd", async (member) => {
@@ -19,14 +22,9 @@ clientLoader.createClient(["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS"])
       await member.roles.add('940616942237138954')
 
     } )
-
-    
-
-  
   
     client.on('messageCreate', async (message) => {
 
-      const db = database.getDatabase();
 
       // Ne pas tenir compte des messages envoyés par les bots, ou qui ne commencent pas par le préfix
       if (message.author.bot || !message.content.startsWith(COMMAND_PREFIX)) return;
@@ -46,4 +44,10 @@ clientLoader.createClient(["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS"])
         await message.channel.send(`The ${commandName} does not exist.`);
       }
     })
+
+    client.on ('ready', () => {
+      level(client)
+    })
+
   });
+  
